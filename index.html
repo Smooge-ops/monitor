@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端监控系统测试页面</title>
+</head>
+<!-- 
+    ·异常监控，包括:JS异常、接口异常、白屏异常、资源异常等
+    ·关键性能数据监控，如:FP、FCP、DOM Ready、DNS等
+    ·用户行为数据，如:PV、UV、页面停留时间等
+    ·HTTP请求监控，包括:请求链路、成功率、返回信息等
+-->
+<script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+<script src = "./monitor.js"></script>
+
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .cont{
+        position:absolute;
+        width: 800px;
+        height: 100px;
+        border-radius: 10px;
+        background-color: whitesmoke;
+        /* 页面居中 */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    li{
+        display:inline-block;
+        list-style: none;
+        /* 文字垂直居中 */
+        line-height: 100px;
+        /* 水平居中 */
+        text-align: center;
+        font-size: 18px;
+        width: 100%;
+    }
+    /* 第一个和最后一个li加上border-radius */
+    li:first-child{
+        border-radius: 10px 0 0 10px;
+    }
+    li:last-child{
+        border-radius: 0 10px 10px 0;
+    }
+    li:hover{
+        background-color: skyblue;
+        cursor: pointer;
+    }
+    .err{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+</style>
+<body>
+    <div class="cont">
+        <ul class="err">
+            <li onclick="errorClick()">JS异常</li>
+            <li onclick="promiseErrorClick()">promise异常</li>
+            <li onclick="interfaceErrorClick()">接口异常</li>
+            <li onclick="blankErrorClick()">白屏异常</li>
+        </ul>
+    </div>
+    <!-- 资源加载错误 -->
+    <script src="./notfound.js"></script>
+    <script>
+      // 普通JS错误
+      function errorClick(){
+          window.somevar.error = 'somevalue';
+      }
+      // promise错误
+      function promiseErrorClick() {
+        new Promise((resolve, reject) => {
+        window.someVar.error = "error"
+        }).then(result => {
+          console.log(result)
+        })
+      }
+      // 白屏错误
+      function blankErrorClick() {
+        // 清空页面
+        document.body.innerHTML = '';
+      }
+      //接口异常
+        function interfaceErrorClick() {
+          /* let xhr = new XMLHttpRequest();
+          let body = {
+              kind : "stability",
+              type : "xhrError",
+          }
+          body = JSON.stringify(body);
+          xhr.open("POST", "http://127.0.0.1/error", true);
+          xhr.send(body); */
+          let xhr = new XMLHttpRequest()
+          xhr.open("GET", "http://127.0.0.1/error", true)
+          xhr.responseType = "json";
+          xhr.onerror = error => {
+            console.log("error",error)
+          }
+          xhr.send("type=xhrError")
+        }
+        setTimeout(() => {
+          let h1 = document.createElement("h1");
+          h1.innerHTML = "FMP";
+          h1.style.display = "none"
+          // 性能数据，FMP。需要在元素中添加自定义属性 elementtiming="meaningful"
+          // setFMP(h1)
+        	h1.setAttribute("elementtiming", "meaningful");
+          document.body.appendChild(h1)
+        }, 2000);
+    </script>
+</body>
+</html>
