@@ -1,12 +1,16 @@
+# 环境
+
+node.js + mysql
+
 # 本地使用
 
 1. 初始化与运行
 
-```bash
-$ npm i
-$ cd web
-$ node app.js
-```
+   ```bash
+   $ npm i
+   $ cd web
+   $ node app.js
+   ```
 
 2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒；根目录下的index.html为测试用例。
 
@@ -14,8 +18,10 @@ $ node app.js
    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
    <script src = "./monitor.js"></script>
    ```
+
+3. 启动本地mysql，打开 web/db/index.js，修改数据库配置信息。
  
-3. 刷新 http://www.front-end-monitor.cn/ 页面，查看错误信息
+3. 打开 http://127.0.0.1/ ，查看错误信息
 
 # 上线使用方法
 
