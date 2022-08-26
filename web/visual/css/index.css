@@ -14,6 +14,7 @@
 	display:flex;
 	display: -webkit-flex;}*/
 .title{
+  display:flex;
 	width:100%;
 	font-size:0.12rem;
 	line-height:0.3rem;
@@ -21,7 +22,20 @@
 	text-align:center;
 	font-weight:bold;
 	}	
-	
+.title #deleteBtn{
+  flex-grow: 1;
+  color: white;
+  font-size: 15px;
+  margin-top: 8px;
+  font-weight: 700;
+  cursor:pointer;
+}
+.title .download {
+  flex-grow: 1;
+  color: white;
+  font-size: 15px;
+  margin-top: 8px;
+}
 .border_bg_leftTop{
 	position:absolute;
 	left:-0.008rem;

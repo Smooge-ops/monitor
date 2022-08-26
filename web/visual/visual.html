@@ -24,15 +24,11 @@
 </head>
 <body>
 <div class="bg">
-	<div class="title" style="display:flex;">
-    <div style="flex-grow: 3;"></div>
+	<div class="title">
+    <input id="deleteBtn" type="button" value="清空数据(!!)"/>
     <div style="flex-grow: 10;">前端异常检测大数据可视化</div>
-      <a href="http://116.205.163.117/api/dow" download="" 
-        style="flex-grow: 1;
-        color: white;
-        font-size: 15px;
-        margin-top: 8px;">
-        下载监测文件
+      <a href="http://127.0.0.1/api/dow" download="" class="download">
+        下载SDK文件
       </a>
     </div>
     <div class="leftMain">
@@ -381,10 +377,10 @@ xAxis: {
    }
  ]
 };	
-								//获取dom容器
-								var myChart1 = echarts.init(document.getElementById('chartmain_zhe'));
-								// 使用刚指定的配置项和数据显示图表。
-								myChart1.setOption(option);
+          //获取dom容器
+          var myChart1 = echarts.init(document.getElementById('chartmain_zhe'));
+          // 使用刚指定的配置项和数据显示图表。
+          myChart1.setOption(option);
 						//};
 					</script>
                     <span class="border_bg_leftTop"></span>
@@ -395,60 +391,60 @@ xAxis: {
             </div>
         	<div class="leftMain_middle_right">
             	<div class="leftMain_middle_rightIn">
-                	<h3>关键响应时间(s)</h3>
+                	<h3>关键响应时间(ms)</h3>
                     <div class="biaoge biaoge_bi" style="width:100%; height:30vh">
                     	<ul>
                         	<li>
                             	<div class="liIn">
-                                	<p class="shu shu1">123</p>
+                                	<p class="shu shu1"></p>
                                     <p class="zi">load</p>
                                 </div>
                             </li>
                         	<li>
                             	<div class="liIn">
-                                	<p class="shu shu2">123</p>
+                                	<p class="shu shu2"></p>
                                     <p class="zi">DNS</p>
                                 </div>
                             </li>
 							<li>
                             	<div class="liIn">
-                                	<p class="shu shu3">23</p>
+                                	<p class="shu shu3"></p>
                                     <p class="zi">tcp</p>
                                 </div>
                             </li>
                         	<li>
                             	<div class="liIn">
-                                	<p class="shu shu4">23</p>
+                                	<p class="shu shu4"></p>
                                     <p class="zi">ttfb</p>
                                 </div>
                             </li>
                         	<li>
                             	<div class="liIn">
-                                	<p class="shu shu5">23</p>
+                                	<p class="shu shu5"></p>
                                     <p class="zi">response</p>
                                 </div>
                             </li>
                         	<li>
                             	<div class="liIn">
-                                	<p class="shu shu6">23</p>
+                                	<p class="shu shu6"></p>
                                     <p class="zi">DOM解析</p>
                                 </div>
                             </li>
 							<li>
                             	<div class="liIn">
-                                	<p class="shu shu7">23</p>
+                                	<p class="shu shu7"></p>
                                     <p class="zi">dcl</p>
                                 </div>
                             </li>
 							<li>
                             	<div class="liIn">
-                                	<p class="shu shu8">23</p>
+                                	<p class="shu shu8"></p>
                                     <p class="zi">domready</p>
                                 </div>
                             </li>
 							<li>
                             	<div class="liIn">
-                                	<p class="shu shu9">23</p>
+                                	<p class="shu shu9"></p>
                                     <p class="zi">ttl</p>
                                 </div>
                             </li>
@@ -508,6 +504,16 @@ xAxis: {
 <!--数字增长累加动画-->
 
 <script type="text/javascript">
+    $('#deleteBtn').on('click', function () {
+        $.ajax({
+            type: 'POST',
+            url: 'http://127.0.0.1/api/deleteAll',
+            success: function (res) {
+                console.log(res)
+            }
+        })
+    })
+
 	$(".shu1").numScroll();
 	$(".shu2").numScroll();
 	$(".shu3").numScroll();
@@ -590,10 +596,10 @@ xAxis: {
 			]
 		};
 		
-	//获取dom容器
-					var myChart = echarts.init(document.getElementById('chartmain_bing'));
-					// 使用刚指定的配置项和数据显示图表。
-					myChart.setOption(option);
+	  //获取dom容器
+    var myChart = echarts.init(document.getElementById('chartmain_bing'));
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
 	/* JS异常 */
 	getData("normal_jserror",res=>{
 		// 异常数
@@ -653,14 +659,12 @@ xAxis: {
 	});
 
 	/* 接口异常 */
-	getData("xhr",res=>{
-    
+	getData("xhr_err",res=>{
       // 异常数
       let xhr_num = 0;
       for(var i = 0;i<res.data.length;i++){
-        if (res.data[i].status == "500-Internal Server Error") {
           xhr_num++;
-        }}
+      }
       // xhr_num = res.data.length;
       document.querySelectorAll(".liIn")[1].querySelector(".shu2").innerHTML = xhr_num;
       // 统计时间范围
@@ -686,7 +690,6 @@ xAxis: {
 
       //列表数据
       for(var i = 0;i<res.data.length;i++){
-        if (res.data[i].status == "500-Internal Server Error") {
           // console.log(res.data[i]);
           // 时间
           time = new Date(res.data[i].timestamp*1000);
@@ -698,11 +701,12 @@ xAxis: {
           line = 0;
           // TODO:报错列
           // column = 0;
-          let fileName = res.data[i].url.split("//")[1].split("/");
+          /* let fileName = res.data[i].url.split("//")[1].split("/");
           let file;
           if(fileName.length > 5)
             file = fileName.splice(0, fileName.length-3);
-          column = fileName.join("/");
+          column = fileName.join("/"); */
+          column = res.data[i].pathname;
           // 获取列表
           var ullist = document.querySelector(".ul_listIn");
           // 利用上述信息创建一个ul并加入list中
@@ -710,10 +714,6 @@ xAxis: {
           ul.innerHTML = "<li>"+time+"</li><li>"+type+"</li><li>"+line+"</li><li style='width:40%;>"+column+"</li>";
           ullist.appendChild(ul);
         }
-      }
-    
-		
-		
 	});
 	
 	/* 资源异常 */

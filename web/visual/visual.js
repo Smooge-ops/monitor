@@ -1,7 +1,7 @@
 function getData(table_name, callback) {
 	$.ajax({
 		type: "GET", // 请求的方式
-		url: "http://116.205.163.117/api/get", // 请求的 URL 地址
+		url: "http://127.0.0.1/api/get", // 请求的 URL 地址
 		data: { table_name: table_name }, // 这次请求要携带的数据
 		success: function (res) {
 			// 请求成功之后的回调函数

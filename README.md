@@ -1,6 +1,9 @@
 # 环境
 
-node.js + mysql
+- 前端：html+css+javascript+ajax
+- 后端：node.js
+- 数据库：mysql
+- 可视化界面：echarts
 
 # 本地使用
 
@@ -9,70 +12,47 @@ node.js + mysql
    ```bash
    $ npm i
    $ cd web
+   # 增加node服务器内存限制
+   $ npm run fix-memory-limit
    $ node app.js
    ```
 
-2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒；根目录下的index.html为测试用例。
+2. 在需要测试的 html 文件头部(比如根目录下的 index.html)，导入以下代码。注：上下顺序不可颠倒。
 
    ```html
    <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-   <script src = "./monitor.js"></script>
+   <script src="./monitor.js"></script>
    ```
 
-3. 启动本地mysql，打开 web/db/index.js，修改数据库配置信息。
- 
-3. 打开 http://127.0.0.1/ ，查看错误信息
+3. 启动本地 mysql，创建 "front_data-data" 数据库，打开 web/db/index.js，修改数据库配置信息。
 
-# 上线使用方法
+4. 打开 http://127.0.0.1/ 查看错误信息
 
-1. 进入 http://116.205.163.117/ 页面，点击右上角的"下载监测文件"，下载 monitor.js 文件
-
-2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒
-
-   ```html
-   <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
-   <script src = "./monitor.js"></script>
-   ```
-
-3. 刷新 http://www.front-end-monitor.cn/ 页面，查看错误信息
-
-
+5. http://127.0.0.1/ 点击左上角，清空数据库 front_data 中的所有数据；点击右上角下载 SDK 探针文件
 
 # 整体框架
 
-通过无痕埋点的方式向监控对象植入前端代码，并通过ajax传送到服务器端
+通过无痕埋点的方式向监控对象植入前端代码，并通过 ajax 传送到服务器端
 
-服务器由express框架暂时搭建于本地
+服务器由 express 框架暂时搭建于本地
 
-服务器端将接受到的数据存入云服务器上的mysql数据库
+服务器端将接受到的数据存入本地的 mysql 数据库
 
 可视化界面将实时向服务器端请求数据并展示于界面上
 
-
-
-# 环境
-
-- 前端：html+css+javascript+ajax
-
-- 后端：node.js
-- 数据库：mysql
-- 可视化界面：echarts
-
-
-
 # 监测
 
-异常监控，包括:JS异常、接口异常、白屏异常、资源异常等
+异常监控，包括:JS 异常、接口异常、白屏异常、资源异常等
 
-关键性能数据监控，如:FP、FCP、DOM Ready、DNS等
+关键性能数据监控，如:FP、FCP、DOM Ready、DNS 等
 
 用户行为数据，如:PV、UV、页面停留时间等
 
-HTTP请求监控，包括:请求链路、成功率、返回信息等
+HTTP 请求监控，包括:请求链路、成功率、返回信息等
 
 ## 异常监测
 
-### Js异常
+### Js 异常
 
 #### 资源加载
 
@@ -100,7 +80,7 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 }
 ```
 
-#### 普通JS异常
+#### 普通 JS 异常
 
 ```
 {
@@ -112,7 +92,7 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 
     kind: "stability", // 监控指标的大类，稳定性
 
-    type: "jsError", // 
+    type: "jsError", //
 
     message: event.message, // 报错信息
 
@@ -154,6 +134,9 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 
 ### 白屏异常
 
+- elementsFromPoint 方法可以获取到当前视口内指定坐标处，由里到外排列的所有元素
+- 根据 elementsFromPoint api，获取屏幕水平中线和竖直中线所在的元素
+
 ```javascript
 {
         title: document.title, //页面标题
@@ -177,6 +160,9 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 ```
 
 ### 接口异常
+
+- 拦截重写 xhr 的 open、send 方法
+- 监听 load、error、abort 事件
 
 ```
 {
@@ -208,7 +194,7 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 
 ### pv&uv
 
-只要知道目前访问者的IP，对于UV和PV的区分可以在可视化前端做
+只要知道目前访问者的 IP，对于 UV 和 PV 的区分可以在可视化前端做
 
 ```javascript
 {
@@ -250,7 +236,7 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 
 ## 性能指标
 
-性能指标的单位都是时间ms
+性能指标的单位都是时间 ms
 
 ### 加载时间指标
 
@@ -295,14 +281,12 @@ HTTP请求监控，包括:请求链路、成功率、返回信息等
 }
 ```
 
-
-
 # 数据发送
 
-## 方法1
+## 方法 1
 
 采集到数据后，需要将其传递给可视化界面做呈现，传递地点可以选择阿里云的日志服务（先登录阿里云，获取一个地址），则可视化的部分由阿里云集成好
 
-## 方法2（采用）
+## 方法 2（采用）
 
-使用express搭建服务器，监听前端发出的post（数据采集）和get（数据获取）请求，并分别从数据库中存入取出数据
+使用 express 搭建服务器，监听前端发出的 post（数据采集）和 get（数据获取）请求，并分别从数据库中存入取出数据

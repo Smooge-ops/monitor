@@ -3,6 +3,11 @@ const express = require("express");
 // 创建 express 的服务器实例
 const router = express();
 
+//修改限制大小
+/* var bodyParser = require("body-parser");
+router.use(bodyParser.json({ limit: "5000mb" }));
+router.use(bodyParser.urlencoded({ limit: "5000mb", extended: true })); */
+
 // 配置解析表单数据的中间件
 router.use(express.urlencoded({ extended: false }));
 
@@ -18,15 +23,19 @@ router.get("/", (req, res) => {
 });
 
 // 导入路由模块
-const addDtaa = require("./router/addDataServer.js");
+const addDtaa = require("./router/addDataServer");
 // http://127.0.0.1/api/post
 router.use("/api", addDtaa);
 
-const getData = require("./router/getDataServer.js");
+const getData = require("./router/getDataServer");
 // http://127.0.0.1/api/get
 router.use("/api", getData);
 
-const download = require("./router/download.js");
+const deleteAll = require("./router/deleteAllDataServer");
+// http://127.0.0.1/api/deleteAll
+router.use("/api", deleteAll);
+
+const download = require("./router/download");
 // http://127.0.0.1/api/dow
 router.use("/api", download);
 
@@ -36,5 +45,5 @@ router.get("/error", function (req, res) {
 
 // 调用 app.listen 方法，指定端口号并启动web服务器
 router.listen(80, function () {
-	console.log("Express server running at http://www.front-end-monitor.cn");
+	console.log("Express server running at http://127.0.0.1");
 });

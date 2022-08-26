@@ -6,11 +6,12 @@ map.set(1, "resource_loading");
 map.set(2, "normal_jserror");
 map.set(3, "promise_error");
 map.set(4, "blank");
-map.set(5, "xhr");
+map.set(5, "xhr_suc");
 map.set(6, "pv");
-map.set(7, "stayTime");
+map.set(7, "staytime");
 map.set(8, "timing");
 map.set(9, "paint");
+map.set(10, "xhr_err");
 
 // 添加数据
 function addData(datas) {
@@ -19,13 +20,29 @@ function addData(datas) {
 	else if (datas.kind == "stability" && datas.type == "jsError") index = 2;
 	else if (datas.kind == "stability" && datas.type == "promiseError") index = 3;
 	else if (datas.kind == "stability" && datas.type == "blank") index = 4;
-	else if (datas.kind == "stability" && datas.type == "xhr") index = 5;
+	// TODO:
+	else if (
+		datas.kind == "stability" &&
+		datas.type == "xhr" &&
+		datas.status == "200-OK"
+	)
+		index = 5;
 	else if (datas.kind == "business" && datas.type == "pv") index = 6;
 	else if (datas.kind == "business" && datas.type == "stayTime") index = 7;
 	else if (datas.kind == "performance" && datas.type == "timing") index = 8;
 	else if (datas.kind == "performance" && datas.type == "paint") index = 9;
+	else if (
+		datas.kind == "stability" &&
+		datas.type == "xhr" &&
+		datas.status == "500-Internal Server Error"
+	)
+		index = 10;
 
-	const sqlStr = "insert into " + map.get(index) + " set ?";
+	let sqlStr = "insert into " + map.get(index) + " set ?";
+	// 如果是 xhr 请求成功，使用 insert into ... on duplicate key update 去重
+	if (index == 5)
+		sqlStr =
+			"insert into xhr_suc set ? on duplicate key update timestamp=values(timestamp)";
 	// 执行插入操作
 	db.query(sqlStr, datas, (err, results) => {
 		if (err) return console.log("插入失败", err.message);
@@ -40,12 +57,22 @@ function getData(table_name, callback) {
 	let sql = "select * from " + table_name;
 	// 执行sql，并处理执行的结果，查询的结果在results变量中，results其实是一个数组
 	db.query(sql, function (error, results, fields) {
-		if (error) throw error;
+		if (error) throw error.message;
 		callback(results);
+	});
+}
+
+function deleteAllData(table_name) {
+	// 编写sql语句
+	let sql = "truncate table " + table_name;
+	// 执行sql，并处理执行的结果，查询的结果在results变量中，results其实是一个数组
+	db.query(sql, error => {
+		if (error) throw error;
 	});
 }
 
 module.exports = {
 	addData,
-	getData
+	getData,
+	deleteAllData
 };

@@ -9,7 +9,7 @@ function sendData(data = {}) {
 	// console.log("log", log);
 	$.ajax({
 		type: "POST",
-		url: "http://116.205.163.117/api/post",
+		url: "http://127.0.0.1/api/post",
 		data: log,
 		success: function (res) {
 			console.log(res);
@@ -177,35 +177,40 @@ class monitor {
 	}
 
 	blankScreen() {
-		let wrapperElements = ["html", "body", "#container", ".content"];
-		let emptyPoints = 0;
+		let wrapperElements = ["html", "body"];
 		function getSelector(element) {
 			const { id, className, nodeName } = element;
 			if (id) {
 				return "#" + id;
 			} else if (className) {
-				// 过滤空白符 + 拼接
+				// className = "header title name"
 				return (
 					"." +
 					className
-						.split(" ")
-						.filter(item => !!item)
-						.join(".")
+						.split(" ") // 分割, 数组[header, title, name]
+						.filter(item => !!item) // 过滤多个空格
+						// let a = "header    title name";
+						// let b = a.split(" ");
+						// console.log(b); // ['header', '', '', '', 'title', 'name']
+						.join(".") // 连接 .header.title.name
 				);
 			} else {
-				return nodeName.toLowerCase();
+				return nodeName.toLowerCase(); // 节点名字
 			}
 		}
+		let emptyPoints = 0;
 		function isWrapper(element) {
 			let selector = getSelector(element);
+			// selector 与 wrapperElements 匹配上了，说明当前点是空白点
 			if (wrapperElements.indexOf(selector) !== -1) {
 				emptyPoints++;
 			}
 		}
 		// 刚开始页面内容为空，等页面渲染完成，再去做判断
 		onload(function () {
-			let xElements, yElements;
-			for (let i = 0; i < 9; i++) {
+			let xElements, yElements, diagonal1, diagonal2;
+			for (let i = 1; i <= 9; i++) {
+				// elementsFromPoint方法可以获取到当前视口内指定坐标处，由里到外排列的所有元素。如果所有元素都是 document/body，意味着当前白屏
 				xElements = document.elementsFromPoint(
 					(window.innerWidth * i) / 10,
 					window.innerHeight / 2
@@ -214,11 +219,25 @@ class monitor {
 					window.innerWidth / 2,
 					(window.innerHeight * i) / 10
 				);
+				// 左上角到右下角
+				diagonal1 = document.elementsFromPoint(
+					(window.innerWidth * i) / 10,
+					(window.innerHeight * i) / 10
+				);
+				// 右上角到左下角
+				diagonal2 = document.elementsFromPoint(
+					(window.innerWidth * (10 - i)) / 10,
+					(window.innerHeight * i) / 10
+				);
+				// isWrapper自定义函数 是否有包裹元素
 				isWrapper(xElements[0]);
 				isWrapper(yElements[0]);
+				isWrapper(diagonal1[0]);
+				isWrapper(diagonal2[0]);
 			}
 			// 白屏
-			if (emptyPoints >= 18) {
+			if (emptyPoints >= 36) {
+				// centerElements 中心点选择器
 				const centerElements = document.elementsFromPoint(
 					window.innerWidth / 2,
 					window.innerHeight / 2
@@ -231,8 +250,8 @@ class monitor {
 					kind: "stability",
 					type: "blank",
 					emptyPoints: emptyPoints + "",
-					screen: window.screen.width + "X" + window.screen.height,
-					viewPoint: window.innerWidth + "X" + window.innerHeight,
+					screen: window.screen.width + "X" + window.screen.height, // 分辨率
+					viewPoint: window.innerWidth + "X" + window.innerHeight, // 布局视口大小
 					selector: getSelector(centerElements[0])
 				});
 			}
@@ -339,17 +358,22 @@ class monitor {
 	injectXHR() {
 		let XMLHttpRequest = window.XMLHttpRequest;
 		let oldOpen = XMLHttpRequest.prototype.open;
+		// open 方法拦截获取 xhr, 获取 logData
 		XMLHttpRequest.prototype.open = function (method, url, async) {
-			// 把上报接口过滤掉
-			if (!url.match(/logstores/) && !url.match(/sockjs/)) {
+			// 把上报接口 阿里云日志、webpack 过滤掉
+			/* if (!url.match(/logstores/) && !url.match(/sockjs/)) {
 				this.logData = { method, url, async };
-			}
+      } */
+			this.logData = { method, url, async };
 			return oldOpen.apply(this, arguments);
 		};
+
 		let oldSend = XMLHttpRequest.prototype.send;
 		XMLHttpRequest.prototype.send = function (body) {
+			// 如果 logData 有值，说明拦截成功
 			if (this.logData) {
 				let startTime = Date.now();
+				// habdler 执行完毕后，返回新的函数 event => {}
 				let handler = type => event => {
 					// 持续时间
 					let duration = Date.now() - startTime;
@@ -363,12 +387,13 @@ class monitor {
 						status: status + "-" + statusText, // 状态码
 						duration,
 						response: this.response ? JSON.stringify(this.response) : "", // 响应体
-						params: body || "" // 入参
+						params: decodeURI(body.split("&").slice(0, 5).join("&")) || "" // 入参.'kind=stability&type=xhr&eventType=load&pathname=...t&status=200-OK'
 					});
 				};
-				this.addEventListener("load", handler("load"), false);
-				this.addEventListener("error", handler, false);
-				this.addEventListener("abort", handler, false);
+				// 'XMLHttpRequest readyState 0 1 2 3 4。readyState = 4, 触发 load 事件
+				this.addEventListener("load", handler("load"), false); // 请求返回成功，包括返回500失败
+				this.addEventListener("error", handler, false); // 请求返回失败
+				this.addEventListener("abort", handler, false); // 放弃
 			}
 			return oldSend.apply(this, arguments);
 		};

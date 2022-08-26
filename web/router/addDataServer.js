@@ -5,7 +5,6 @@ const dbOperation = require("../db/operation");
 router.post("/post", (req, res) => {
 	const body = req.body;
 	dbOperation.addData(body);
-	// new addData().add(body);
 
 	// 调用 res.send() 方法，向客户端响应处理的结果
 	res.send({
