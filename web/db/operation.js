@@ -66,8 +66,8 @@ function deleteAllData(table_name) {
 	// 编写sql语句
 	let sql = "truncate table " + table_name;
 	// 执行sql，并处理执行的结果，查询的结果在results变量中，results其实是一个数组
-	db.query(sql, error => {
-		if (error) throw error;
+	db.query(sql, err => {
+		if (err) return console.log("清空数据失败", err.message);
 	});
 }
 
