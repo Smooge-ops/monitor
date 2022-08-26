@@ -1,6 +1,12 @@
-# 运行
+# 本地使用
 
-1. 进入 web 目录，node app.js
+1. 初始化与运行
+
+```bash
+$ npm i
+$ cd web
+$ node app.js
+```
 
 2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒；根目录下的index.html为测试用例。
 
@@ -11,7 +17,7 @@
  
 3. 刷新 http://www.front-end-monitor.cn/ 页面，查看错误信息
 
-# demo使用方法
+# 上线使用方法
 
 1. 进入 http://116.205.163.117/ 页面，点击右上角的"下载监测文件"，下载 monitor.js 文件
 
