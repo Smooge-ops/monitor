@@ -1,16 +1,19 @@
-# 前言
+# 运行
 
-本次前端监控系统参考以下项目实现
+1. 进入 web 目录，node app.js
 
-[https://github.com/miracle90/monitor](https://github.com/miracle90/monitor)
+2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒；根目录下的index.html为测试用例。
 
-由于我们的项目有一定的特殊性，需要自己进行一些代码补全和相关操作的学习
+   ```html
+   <script src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js"></script>
+   <script src = "./monitor.js"></script>
+   ```
+ 
+3. 刷新 http://www.front-end-monitor.cn/ 页面，查看错误信息
 
+# demo使用方法
 
-
-# 使用方法
-
-1. 进入 http://www.front-end-monitor.cn/ 页面，点击右上角的"下载监测文件"，下载 monitor.js 文件
+1. 进入 http://116.205.163.117/ 页面，点击右上角的"下载监测文件"，下载 monitor.js 文件
 
 2. 在需要测试的html文件头部，导入以下代码。注：上下顺序不可颠倒
 
