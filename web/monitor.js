@@ -15,6 +15,11 @@ function sendData(data = {}) {
 			console.log(res);
 		}
 	});
+
+	/* axios.post("http://127.0.0.1/api/post", log).then(function (res) {
+		// res.data 是服务器返回的数据
+		console.log(res.data);
+	}); */
 }
 
 function formatTime(times) {
@@ -386,7 +391,9 @@ class monitor {
 						pathname: this.logData.url,
 						status: status + "-" + statusText, // 状态码
 						duration,
-						response: this.response ? JSON.stringify(this.response) : "", // 响应体
+						response: this.response
+							? JSON.parse(JSON.stringify(this.response))
+							: "", // 响应体 JSON.stringify(this.response)
 						params: decodeURI(body.split("&").slice(0, 5).join("&")) || "" // 入参.'kind=stability&type=xhr&eventType=load&pathname=...t&status=200-OK'
 					});
 				};
