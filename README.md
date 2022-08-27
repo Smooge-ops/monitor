@@ -5,6 +5,8 @@
 - 数据库：mysql
 - 可视化界面：echarts
 
+
+
 # 本地使用
 
 1. 初始化与运行
@@ -30,6 +32,8 @@
 
 5. http://127.0.0.1/ 点击左上角，清空数据库 front_data 中的所有数据；点击右上角下载 SDK 探针文件
 
+
+
 # 整体框架
 
 通过无痕埋点的方式向监控对象植入前端代码，并通过 ajax 传送到服务器端
@@ -39,6 +43,56 @@
 服务器端将接受到的数据存入本地的 mysql 数据库
 
 可视化界面将实时向服务器端请求数据并展示于界面上
+
+
+
+# 目录结构
+
+```
+|-- monitor  前端监控项目
+    |-- .gitignore  git忽略文件
+    |-- index.html  测试文件
+    |-- monitor.js  SDK探针
+    |-- package-lock.json  配置文件
+    |-- package.json  配置文件
+    |-- README.md  说明文档
+    |-- visual  可视化界面
+    |   |-- visual.html  可视化界面
+    |   |-- visual.js  数据获取方法
+    |   |-- css  css样式
+    |   |   |-- icon.css
+    |   |   |-- index.css
+    |   |   |-- public.css
+    |   |-- fonts  字体样式
+    |   |   |-- DIN-Bold.otf
+    |   |   |-- DIN-Light.otf
+    |   |   |-- DIN-Medium.otf
+    |   |-- images  图片
+    |   |   |-- bg2.jpg
+    |   |   |-- border_bg.jpg
+    |   |   |-- title_border_bg.png
+    |   |   |-- title_left_bg.png
+    |   |   |-- title_right_bg.png
+    |   |-- js  js工具文档
+    |       |-- echarts.all.js
+    |       |-- echarts.min.js
+    |       |-- jquery-1.11.0.min.js
+    |       |-- jquery.numscroll.js
+    |-- web  后端搭建
+        |-- app.js  入口文件
+        |-- monitor.js  SDK探针，用于可视化界面中的下载功能
+        |-- db  数据库
+        |   |-- index.js  连接，建表
+        |   |-- operation.js  sql语句
+        |-- router  路由
+            |-- addDataServer.js  向数据库增加数据
+            |-- deleteAllDataServer.js 清空数据库里的数据
+            |-- download.js  下载文件
+            |-- getDataServer.js  获取数据库里的数据
+
+```
+
+
 
 # 监测
 
@@ -281,12 +335,3 @@ HTTP 请求监控，包括:请求链路、成功率、返回信息等
 }
 ```
 
-# 数据发送
-
-## 方法 1
-
-采集到数据后，需要将其传递给可视化界面做呈现，传递地点可以选择阿里云的日志服务（先登录阿里云，获取一个地址），则可视化的部分由阿里云集成好
-
-## 方法 2（采用）
-
-使用 express 搭建服务器，监听前端发出的 post（数据采集）和 get（数据获取）请求，并分别从数据库中存入取出数据
