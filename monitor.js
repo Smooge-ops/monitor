@@ -15,6 +15,11 @@ function sendData(data = {}) {
 			console.log(res);
 		}
 	});
+
+	/* axios.post("http://127.0.0.1/api/post", log).then(function (res) {
+		// res.data 是服务器返回的数据
+		console.log(res.data);
+	}); */
 }
 
 function formatTime(times) {

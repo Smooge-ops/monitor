@@ -9,6 +9,12 @@ function getData(table_name, callback) {
 			callback(res);
 		}
 	});
+
+	/* return axios
+		.get("http://127.0.0.1:3000/get", { table_name: table_name })
+		.then(function (res) {
+			return new Promise((resolve, reject) => resolve(res));
+		}); */
 }
 
 /* getData("resource_loading", res => {
