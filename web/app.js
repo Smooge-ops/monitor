@@ -18,7 +18,7 @@ const cors = require("cors");
 router.use(cors());
 
 // 协商缓存
-app.use((req, res, next) => {
+router.use((req, res, next) => {
 	let key = "__express__" + req.originalUrl || req.url; //以接口路径作为key
 	let cachedBody = mcache.get(key);
 	//   检测key是否有对应的数据.如果有就直接返回
